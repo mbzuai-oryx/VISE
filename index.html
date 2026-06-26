@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Primary Meta Tags -->
+  <meta name="title" content="VISE: Paying More Attention to Visual Tokens in Self-Evolving Large Multimodal Models">
+  <meta name="description" content="VISE is a purely unsupervised, single-model self-evolving framework that fixes visual under-conditioning in LMMs using geometric and semantic invariance rewards.">
+  <meta name="keywords" content="VISE, self-evolving, multimodal, LMM, visual under-conditioning, invariance reward, unsupervised, image captioning, hallucination, visual grounding, ECCV 2026, machine learning, computer vision">
+  <meta name="author" content="Shravan Venkatraman, Ritesh Thawkar, Omkar Thawakar, Rao Muhammad Anwer, Hisham Cholakkal, Salman Khan, Fahad Shahbaz Khan">
+  <meta name="robots" content="index, follow">
+  <meta name="language" content="English">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="MBZUAI Oryx">
+  <meta property="og:title" content="VISE: Paying More Attention to Visual Tokens in Self-Evolving Large Multimodal Models">
+  <meta property="og:description" content="A purely unsupervised, single-model self-evolving framework that strengthens visual conditioning in LMMs via geometric and semantic invariance rewards.">
+  <meta property="og:image" content="static/images/Teaser.png">
+  <meta property="og:image:alt" content="VISE overview teaser">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="VISE: Paying More Attention to Visual Tokens in Self-Evolving LMMs">
+  <meta name="twitter:description" content="Geometric and semantic invariance rewards strengthen visual conditioning in self-evolving multimodal models, with no labels or external rewards.">
+  <meta name="twitter:image" content="static/images/Teaser.png">
+
+  <!-- Academic/Research Specific -->
+  <meta name="citation_title" content="Paying More Attention to Visual Tokens in Self-Evolving Large Multimodal Models">
+  <meta name="citation_author" content="Venkatraman, Shravan">
+  <meta name="citation_author" content="Thawkar, Ritesh">
+  <meta name="citation_author" content="Thawakar, Omkar">
+  <meta name="citation_author" content="Anwer, Rao Muhammad">
+  <meta name="citation_author" content="Cholakkal, Hisham">
+  <meta name="citation_author" content="Khan, Salman">
+  <meta name="citation_author" content="Khan, Fahad Shahbaz">
+  <meta name="citation_publication_date" content="2026">
+  <meta name="citation_conference_title" content="European Conference on Computer Vision (ECCV)">
+  <meta name="citation_arxiv_id" content="2606.27373">
+  <meta name="citation_pdf_url" content="https://arxiv.org/pdf/2606.27373">
+
+  <meta name="theme-color" content="#1565C0">
+
+  <!-- Preconnect for performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://ajax.googleapis.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+  <title>VISE: Paying More Attention to Visual Tokens in Self-Evolving LMMs | ECCV 2026</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="static/images/vise_logo.png">
+  <link rel="apple-touch-icon" href="static/images/vise_logo.png">
+
+  <!-- Critical CSS -->
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+
+  <!-- Non-critical CSS -->
+  <link rel="preload" href="static/css/bulma-carousel.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="static/css/bulma-slider.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="static/css/fontawesome.all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="static/css/bulma-slider.min.css">
+    <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  </noscript>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- JS -->
+  <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script defer src="static/js/bulma-carousel.min.js"></script>
+  <script defer src="static/js/bulma-slider.min.js"></script>
+  <script defer src="static/js/index.js"></script>
+
+  <!-- VISE blue theme -->
+  <style>
+    :root { --primary-color:#1565C0; --primary-hover:#0d47a1; --accent-color:#1976D2; }
+    .publication-title-vise { background:linear-gradient(135deg,#1565C0 0%,#1976D2 100%);
+      -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+    .vise-eq { background:#f1f6fc; border-left:4px solid #1565C0; border-radius:8px;
+      padding:14px 18px; margin:14px 0; font-size:1.02rem; overflow-x:auto; }
+    .reward-card { background:#ffffff; border:1px solid #e2e8f0; border-radius:14px;
+      padding:20px 22px; box-shadow:0 4px 6px -1px rgb(0 0 0 / .08); height:100%; }
+    .reward-card h4 { color:#1565C0; font-weight:700; margin-bottom:8px; }
+    .author-group { margin-bottom:2px; }
+    .fignote { color:#475569; font-size:.95rem; }
+    /* Per-scale results tabs */
+    .scale-tabs { display:flex; justify-content:center; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
+    .scale-tab { border:2px solid #1565C0; background:#fff; color:#1565C0; border-radius:999px;
+      padding:8px 24px; font-weight:600; cursor:pointer; transition:all .2s; font-size:.98rem; }
+    .scale-tab:hover { background:#e8f1fb; }
+    .scale-tab.active { background:#1565C0; color:#fff; }
+    .scale-panel { display:none; }
+    .scale-panel.active { display:block; animation:fadeSlide .35s ease; }
+    @keyframes fadeSlide { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+    .restbl { width:100%; border-collapse:collapse; font-size:.95rem; }
+    .restbl th, .restbl td { padding:7px 14px; text-align:center; border-bottom:1px solid #e8edf3; }
+    .restbl th:first-child, .restbl td:first-child { text-align:left; }
+    .restbl thead th { color:#1565C0; border-bottom:2px solid #1565C0; }
+    .restbl .grouphdr td { background:#f1f6fc; font-weight:700; color:#0d47a1; text-align:left; }
+    .restbl .vise { color:#1565C0; font-weight:700; }
+    .restbl tbody tr:hover { background:#fafcff; }
+  </style>
+</head>
+<body>
+
+  <!-- Scroll to Top -->
+  <button class="scroll-to-top" onclick="scrollToTop()" title="Scroll to top" aria-label="Scroll to top">
+    <i class="fas fa-chevron-up"></i>
+  </button>
+
+  <!-- More Works Dropdown -->
+  <div class="more-works-container">
+    <button class="more-works-btn" onclick="toggleMoreWorks()" title="View More Works from Our Lab">
+      <i class="fas fa-flask"></i> More Works <i class="fas fa-chevron-down dropdown-arrow"></i>
+    </button>
+    <div class="more-works-dropdown" id="moreWorksDropdown">
+      <div class="dropdown-header">
+        <h4>More Works from Our Lab</h4>
+        <button class="close-btn" onclick="toggleMoreWorks()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="works-list">
+        <a href="https://github.com/mbzuai-oryx/LongShOT" class="work-item" target="_blank">
+          <div class="work-info">
+            <h5>LongShOT</h5>
+            <p>A benchmark and agentic framework for omni-modal reasoning and tool use in long videos.</p>
+            <span class="work-venue">2026</span>
+          </div>
+          <i class="fas fa-external-link-alt"></i>
+        </a>
+        <a href="https://github.com/mbzuai-oryx/Video-CoM" class="work-item" target="_blank">
+          <div class="work-info">
+            <h5>Video-CoM</h5>
+            <p>Interactive video reasoning via chain of manipulations.</p>
+            <span class="work-venue">2026</span>
+          </div>
+          <i class="fas fa-external-link-alt"></i>
+        </a>
+        <a href="https://github.com/mbzuai-oryx/EvoLMM" class="work-item" target="_blank">
+          <div class="work-info">
+            <h5>EvoLMM</h5>
+            <p>Self-evolving large multimodal models with continuous rewards.</p>
+            <span class="work-venue">2026</span>
+          </div>
+          <i class="fas fa-external-link-alt"></i>
+        </a>
+        <a href="https://github.com/mbzuai-oryx/CoVR-R" class="work-item" target="_blank">
+          <div class="work-info">
+            <h5>CoVR-R</h5>
+            <p>Reasoning-aware composed video retrieval.</p>
+            <span class="work-venue">2026</span>
+          </div>
+          <i class="fas fa-external-link-alt"></i>
+        </a>
+        <a href="https://github.com/mbzuai-oryx/ThinkGeo" class="work-item" target="_blank">
+          <div class="work-info">
+            <h5>ThinkGeo</h5>
+            <p>A benchmark for tool-augmented agents on remote sensing tasks.</p>
+            <span class="work-venue">CVPR 2026</span>
+          </div>
+          <i class="fas fa-external-link-alt"></i>
+        </a>
+        <a href="https://github.com/mbzuai-oryx/GeoPixel" class="work-item" target="_blank">
+          <div class="work-info">
+            <h5>GeoPixel</h5>
+            <p>A pixel grounding large multimodal model for remote sensing.</p>
+            <span class="work-venue">2026</span>
+          </div>
+          <i class="fas fa-external-link-alt"></i>
+        </a>
+        <a href="https://github.com/mbzuai-oryx/VideoMathQA" class="work-item" target="_blank">
+          <div class="work-info">
+            <h5>VideoMathQA</h5>
+            <p>A benchmark for mathematical reasoning in real-world educational videos.</p>
+            <span class="work-venue">2026</span>
+          </div>
+          <i class="fas fa-external-link-alt"></i>
+        </a>
+        <a href="https://github.com/mbzuai-oryx/Agent-X" class="work-item" target="_blank">
+          <div class="work-info">
+            <h5>Agent-X</h5>
+            <p>Evaluating deep multimodal reasoning in vision-centric agentic tasks.</p>
+            <span class="work-venue">ICLR 2026</span>
+          </div>
+          <i class="fas fa-external-link-alt"></i>
+        </a>
+        <a href="https://github.com/mbzuai-oryx/CoME-VL" class="work-item" target="_blank">
+          <div class="work-info">
+            <h5>CoME-VL</h5>
+            <p>Scaling complementary multi-encoder vision-language learning.</p>
+            <span class="work-venue">2026</span>
+          </div>
+          <i class="fas fa-external-link-alt"></i>
+        </a>
+        <a href="https://github.com/mbzuai-oryx/Awesome-LLM-Post-training" class="work-item" target="_blank">
+          <div class="work-info">
+            <h5>Awesome-LLM-Post-training</h5>
+            <p>A reasoning LLM post-training tutorial, survey, and guide.</p>
+            <span class="work-venue">2026</span>
+          </div>
+          <i class="fas fa-external-link-alt"></i>
+        </a>
+        <a href="https://github.com/mbzuai-oryx/MediX-R1" class="work-item" target="_blank">
+          <div class="work-info">
+            <h5>MediX-R1</h5>
+            <p>Open-ended medical reinforcement learning.</p>
+            <span class="work-venue">2026</span>
+          </div>
+          <i class="fas fa-external-link-alt"></i>
+        </a>
+        <a href="https://github.com/mbzuai-oryx/NestEO" class="work-item" target="_blank">
+          <div class="work-info">
+            <h5>NestEO</h5>
+            <p>A nested and aligned Earth observation framework with a multimodal dataset.</p>
+            <span class="work-venue">2026</span>
+          </div>
+          <i class="fas fa-external-link-alt"></i>
+        </a>
+        <a href="https://github.com/mbzuai-oryx/OpenEarthAgent" class="work-item" target="_blank">
+          <div class="work-info">
+            <h5>OpenEarthAgent</h5>
+            <p>A unified framework for tool-augmented geospatial agents.</p>
+            <span class="work-venue">2026</span>
+          </div>
+          <i class="fas fa-external-link-alt"></i>
+        </a>
+        <a href="https://github.com/mbzuai-oryx/DuwatBench" class="work-item" target="_blank">
+          <div class="work-info">
+            <h5>DuwatBench</h5>
+            <p>A benchmark for Arabic calligraphy understanding.</p>
+            <span class="work-venue">EACL 2026</span>
+          </div>
+          <i class="fas fa-external-link-alt"></i>
+        </a>
+        <a href="https://github.com/mbzuai-oryx/Video-R2" class="work-item" target="_blank">
+          <div class="work-info">
+            <h5>Video-R2</h5>
+            <p>Reinforcing consistent and grounded reasoning in multimodal language models.</p>
+            <span class="work-venue">2026</span>
+          </div>
+          <i class="fas fa-external-link-alt"></i>
+        </a>
+        <a href="https://github.com/mbzuai-oryx/UniMed-CLIP" class="work-item" target="_blank">
+          <div class="work-info">
+            <h5>UniMed-CLIP</h5>
+            <p>A unified image-text pretraining paradigm for diverse medical imaging modalities.</p>
+            <span class="work-venue">2026</span>
+          </div>
+          <i class="fas fa-external-link-alt"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <main id="main-content">
+  <!-- ===================== HERO ===================== -->
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <img src="static/images/vise_logo.png" alt="VISE logo" style="height:90px;margin-bottom:10px;">
+            <h1 class="title is-2 publication-title">
+              <span class="publication-title-vise">Paying More Attention to Visual Tokens</span><br>
+              in Self-Evolving Large Multimodal Models
+            </h1>
+            <p class="is-size-5" style="margin-bottom:14px;color:#475569;">
+              ECCV 2026
+            </p>
+
+            <!-- Authors (VISE paper) -->
+            <div class="is-size-5 publication-authors">
+              <div class="author-group">
+                <span class="author-block">
+                  <a href="https://shravfolio.vercel.app" target="_blank" style="color:#1565C0;font-weight:normal;">Shravan Venkatraman</a><sup>1</sup>,
+                </span>
+                <span class="author-block">
+                  <a href="https://scholar.google.com/citations?hl=en&amp;user=9-2AnjQAAAAJ&amp;view_op=list_works&amp;sortby=pubdate" target="_blank" style="color:#1565C0;font-weight:normal;">Ritesh Thawkar</a><sup>1</sup>,
+                </span>
+                <span class="author-block">
+                  <a href="https://omkarthawakar.github.io/" target="_blank" style="color:#1565C0;font-weight:normal;">Omkar Thawakar</a><sup>1</sup>,
+                </span>
+                <span class="author-block">
+                  <a href="https://scholar.google.fi/citations?user=_KlvMVoAAAAJ&amp;hl=en" target="_blank" style="color:#1565C0;font-weight:normal;">Rao Muhammad Anwer</a><sup>1,2</sup>,
+                </span>
+              </div>
+              <div class="author-group">
+                <span class="author-block">
+                  <a href="https://scholar.google.ae/citations?user=bZ3YBRcAAAAJ&amp;hl=fr" target="_blank" style="color:#1565C0;font-weight:normal;">Hisham Cholakkal</a><sup>1</sup>,
+                </span>
+                <span class="author-block">
+                  <a href="https://salman-h-khan.github.io/" target="_blank" style="color:#1565C0;font-weight:normal;">Salman Khan</a><sup>1,3</sup>,
+                </span>
+                <span class="author-block">
+                  <a href="https://sites.google.com/view/fahadkhans/home" target="_blank" style="color:#1565C0;font-weight:normal;">Fahad Khan</a><sup>1,4</sup>
+                </span>
+              </div>
+            </div>
+
+            <div class="is-size-6 publication-authors" style="margin-top:8px;color:#475569;">
+              <span class="author-block"><sup>1</sup>Mohamed bin Zayed University of Artificial Intelligence &nbsp;&bull;&nbsp; <sup>2</sup>Aalto University</span><br>
+              <span class="author-block"><sup>3</sup>Australian National University &nbsp;&bull;&nbsp; <sup>4</sup>Linköping University</span>
+            </div>
+
+            <!-- Links -->
+            <div class="column has-text-centered" style="margin-top:18px;">
+              <div class="publication-links">
+                <span class="link-block">
+                  <a href="https://arxiv.org/pdf/2606.27373" target="_blank" class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon"><i class="fas fa-file-pdf"></i></span><span>Paper</span>
+                  </a>
+                </span>
+                <span class="link-block">
+                  <a href="https://arxiv.org/abs/2606.27373" target="_blank" class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon"><i class="ai ai-arxiv"></i></span><span>arXiv</span>
+                  </a>
+                </span>
+                <span class="link-block">
+                  <a href="https://github.com/mbzuai-oryx/VISE" target="_blank" class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon"><i class="fab fa-github"></i></span><span>Code</span>
+                  </a>
+                </span>
+                <span class="link-block">
+                  <a href="https://huggingface.co/shravvvv/VISE" target="_blank" class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">🤗</span><span>Model</span>
+                  </a>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== TEASER ===================== -->
+  <section class="hero teaser">
+    <div class="container is-max-desktop">
+      <div class="hero-body">
+        <img src="static/images/Teaser.png" alt="VISE overview teaser" style="width:100%;border-radius:12px;">
+        <h2 class="subtitle has-text-centered fignote" style="margin-top:12px;">
+          Prior self-evolving methods use specialist roles optimized for <i>answer consistency</i>.
+          On chart queries (minimal visual dependence) both prior work and VISE answer correctly,
+          but on real-scene understanding prior methods fall back on statistically plausible guesses
+          (a &ldquo;ramp surface&rdquo;), while VISE reads the actual evidence (a &ldquo;metal ledge&rdquo;).
+        </h2>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== ABSTRACT ===================== -->
+  <section class="section hero is-light">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Abstract</h2>
+          <div class="content has-text-justified">
+            <p>
+              Recently, self-evolving large multimodal models (LMMs) have received attention for
+              improving visual reasoning in a purely unsupervised setting. However, multi-role
+              self-play and self-consistency reward schemes in existing self-evolving LMMs optimize
+              answer agreement without ensuring the decoder attends to visual content, relying instead
+              on statistical language priors to produce self-consistent outputs. This leads to a
+              persistent failure mode we term <b>visual under-conditioning</b>, where the decoder
+              relies on language priors rather than the image during generation, manifesting as
+              insufficient attention to visual tokens. As a result, current self-evolving LMMs struggle
+              on vision&ndash;language understanding tasks such as image captioning and visual question
+              answering. To address this, we propose <b>VISE</b> (Visual Invariance Self-Evolution), a
+              purely unsupervised self-evolving framework that directly regularizes the model's visual
+              conditioning policy through two complementary invariance-based rewards: a <b>geometric
+              invariance</b> reward that enforces spatial consistency under known transformations, and a
+              <b>semantic invariance</b> reward that penalizes evidence-agnostic generation by requiring
+              the model to recognize the absence of evidence when predicted regions are perturbed. VISE
+              operates within a single model without specialist roles, external reward models, or
+              annotations, and is trained on raw unlabeled images. Experiments on 18 benchmarks
+              demonstrate the efficacy of our approach. Using Qwen3-VL-2B as the base model, VISE
+              achieves gains of <b>+16.85 CIDEr on COCO</b> and <b>+19.66 CIDEr on TextCaps</b>, reduces
+              object hallucination by <b>5.0 CHAIR-I points</b>, and generalizes across multiple model
+              families and scales.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== METHOD ===================== -->
+  <section class="section">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Method</h2>
+          <div class="content has-text-justified">
+            <p>
+              VISE runs entirely within a <b>single model</b>. Given a raw unlabeled image, the model
+              generates a localization query and predicts a bounding box. Two complementary invariance
+              branches then produce a reward computed entirely from the model's own predictions, which
+              is optimized with <b>KL-regularized REINFORCE</b> against a frozen reference policy.
+            </p>
+          </div>
+          <img src="static/images/architecture2.png" alt="VISE architecture" style="width:95%;border-radius:12px;">
+          <h2 class="subtitle has-text-centered fignote" style="margin-top:10px;">
+            The Geometric branch transforms the view, re-predicts a box, and rewards agreement with the
+            analytically projected original box. The Semantic branch ghosts the predicted region and
+            rewards the model only if it detects the object before perturbation and not after.
+          </h2>
+        </div>
+      </div>
+
+      <div class="columns is-centered" style="margin-top:18px;">
+        <div class="column is-half">
+          <div class="reward-card">
+            <h4><i class="fas fa-vector-square"></i>&nbsp; Geometric Invariance &nbsp;<code>R<sub>geo</sub></code></h4>
+            <p class="has-text-justified">
+              A correctly-conditioned model should localize the same object consistently under a known
+              spatial transform (affine, crop, or flip). We project the original box through the
+              transform's matrix and reward overlap with the box predicted on the transformed view.
+            </p>
+            <div class="vise-eq has-text-centered">
+              R<sub>geo</sub> = ( GIoU(B<sub>proj</sub>, B<sub>new</sub>) + 1 ) / 2
+            </div>
+          </div>
+        </div>
+        <div class="column is-half">
+          <div class="reward-card">
+            <h4><i class="fas fa-eye-slash"></i>&nbsp; Semantic Invariance &nbsp;<code>R<sub>sem</sub></code></h4>
+            <p class="has-text-justified">
+              If the predicted region is blurred away (&ldquo;ghosting&rdquo;), the evidence for the
+              object disappears, so a well-conditioned model should notice. We reward the model only
+              when the object is judged <i>visible</i> before ghosting and <i>not visible</i> after.
+            </p>
+            <div class="vise-eq has-text-centered">
+              R<sub>sem</sub> = 1 &nbsp;if&nbsp; v=1 &nbsp;and&nbsp; ṽ=0, &nbsp;else&nbsp; 0
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="has-text-centered" style="margin-top:6px;">
+        <div class="vise-eq" style="display:inline-block;">
+          Composite reward:&nbsp; <b>R = 0.5&middot;R<sub>geo</sub> + 0.5&middot;R<sub>sem</sub></b>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== RESULTS ===================== -->
+  <section class="section hero is-light">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-full">
+          <h2 class="title is-3">Results</h2>
+          <div class="content has-text-justified">
+            <p>
+              VISE improves <b>all 18 benchmarks</b> (captioning, VQA, reasoning, and
+              hallucination) with <b>no task tradeoffs</b>, across four scales (2B/4B/8B/32B) and
+              four backbone families (Qwen3-VL, InternVL3, Gemma-3, Llama-3.2-Vision). Prior
+              consistency-based methods trained on math/science images <i>regress</i> on captioning,
+              while VISE achieves the largest captioning gains and remains competitive on reasoning.
+            </p>
+          </div>
+          <img src="static/images/Plots.png" alt="Performance deltas vs base (Qwen3-VL-2B)" style="width:100%;border-radius:12px;">
+        </div>
+      </div>
+
+      <!-- Headline numbers -->
+      <div class="columns is-centered has-text-centered" style="margin-top:6px;">
+        <div class="column">
+          <p class="title is-2" style="color:#1565C0;">+16.85</p>
+          <p class="subtitle is-6">COCO CIDEr (2B)</p>
+        </div>
+        <div class="column">
+          <p class="title is-2" style="color:#1565C0;">+19.66</p>
+          <p class="subtitle is-6">TextCaps CIDEr (2B)</p>
+        </div>
+        <div class="column">
+          <p class="title is-2" style="color:#1565C0;">&minus;5.00</p>
+          <p class="subtitle is-6">CHAIR-I hallucination (2B)</p>
+        </div>
+        <div class="column">
+          <p class="title is-2" style="color:#1565C0;">+2.84%</p>
+          <p class="subtitle is-6">visual-token attention (2B)</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== RESULTS ACROSS SCALES ===================== -->
+  <section class="section">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3 has-text-centered">Results Across Model Scales</h2>
+      <p class="has-text-centered fignote" style="margin-bottom:18px;">
+        Base vs. VISE on Qwen3-VL at three scales. VISE improves every benchmark with no task tradeoffs.
+        For CHAIR (&#8595;), lower is better. All numbers are from the paper.
+      </p>
+      <div class="scale-tabs">
+        <button class="scale-tab active" id="tab-2B" onclick="showScale('2B')">Qwen3-VL-2B</button>
+        <button class="scale-tab" id="tab-4B" onclick="showScale('4B')">Qwen3-VL-4B</button>
+        <button class="scale-tab" id="tab-8B" onclick="showScale('8B')">Qwen3-VL-8B</button>
+      </div>
+        <div class="scale-panel active" id="panel-2B">
+          <table class="restbl"><thead><tr><th>Benchmark</th><th>Base</th><th>VISE</th></tr></thead>
+          <tbody>
+            <tr class="grouphdr"><td colspan="3">Image Captioning (CIDEr)</td></tr>
+            <tr><td>COCO</td><td>21.54</td><td class="vise">38.39</td></tr>
+            <tr><td>NoCaps</td><td>19.52</td><td class="vise">34.25</td></tr>
+            <tr><td>Flickr30k</td><td>26.09</td><td class="vise">42.64</td></tr>
+            <tr><td>TextCaps</td><td>22.20</td><td class="vise">41.86</td></tr>
+            <tr class="grouphdr"><td colspan="3">Reasoning &amp; VQA (Accuracy)</td></tr>
+            <tr><td>ScienceQA</td><td>79.42</td><td class="vise">83.61</td></tr>
+            <tr><td>MMMU</td><td>38.92</td><td class="vise">40.67</td></tr>
+            <tr><td>InfoVQA</td><td>69.02</td><td class="vise">71.43</td></tr>
+            <tr><td>AI2D</td><td>73.67</td><td class="vise">76.42</td></tr>
+            <tr><td>ChartQA</td><td>79.16</td><td class="vise">80.08</td></tr>
+            <tr><td>GQA</td><td>58.25</td><td class="vise">59.41</td></tr>
+            <tr class="grouphdr"><td colspan="3">Hallucination</td></tr>
+            <tr><td>CHAIR-I &#8595;</td><td>13.21</td><td class="vise">8.21</td></tr>
+            <tr><td>CHAIR-S &#8595;</td><td>45.96</td><td class="vise">40.51</td></tr>
+            <tr><td>POPE</td><td>89.01</td><td class="vise">90.03</td></tr>
+          </tbody></table>
+        </div>
+        <div class="scale-panel" id="panel-4B">
+          <table class="restbl"><thead><tr><th>Benchmark</th><th>Base</th><th>VISE</th></tr></thead>
+          <tbody>
+            <tr class="grouphdr"><td colspan="3">Image Captioning (CIDEr)</td></tr>
+            <tr><td>COCO</td><td>27.35</td><td class="vise">39.65</td></tr>
+            <tr><td>NoCaps</td><td>22.36</td><td class="vise">34.97</td></tr>
+            <tr><td>Flickr30k</td><td>31.10</td><td class="vise">37.17</td></tr>
+            <tr><td>TextCaps</td><td>34.54</td><td class="vise">38.59</td></tr>
+            <tr class="grouphdr"><td colspan="3">Reasoning &amp; VQA (Accuracy)</td></tr>
+            <tr><td>ScienceQA</td><td>87.51</td><td class="vise">90.04</td></tr>
+            <tr><td>MMMU</td><td>45.17</td><td class="vise">48.89</td></tr>
+            <tr><td>InfoVQA</td><td>77.73</td><td class="vise">81.45</td></tr>
+            <tr><td>AI2D</td><td>80.10</td><td class="vise">82.16</td></tr>
+            <tr><td>ChartQA</td><td>83.18</td><td class="vise">84.96</td></tr>
+            <tr><td>GQA</td><td>60.32</td><td class="vise">61.82</td></tr>
+            <tr class="grouphdr"><td colspan="3">Hallucination</td></tr>
+            <tr><td>CHAIR-I &#8595;</td><td>12.91</td><td class="vise">11.90</td></tr>
+            <tr><td>CHAIR-S &#8595;</td><td>44.58</td><td class="vise">43.02</td></tr>
+            <tr><td>POPE</td><td>89.73</td><td class="vise">89.86</td></tr>
+          </tbody></table>
+        </div>
+        <div class="scale-panel" id="panel-8B">
+          <table class="restbl"><thead><tr><th>Benchmark</th><th>Base</th><th>VISE</th></tr></thead>
+          <tbody>
+            <tr class="grouphdr"><td colspan="3">Image Captioning (CIDEr)</td></tr>
+            <tr><td>COCO</td><td>29.01</td><td class="vise">38.49</td></tr>
+            <tr><td>NoCaps</td><td>24.46</td><td class="vise">34.98</td></tr>
+            <tr><td>Flickr30k</td><td>34.02</td><td class="vise">38.62</td></tr>
+            <tr><td>TextCaps</td><td>36.21</td><td class="vise">38.42</td></tr>
+            <tr class="grouphdr"><td colspan="3">Reasoning &amp; VQA (Accuracy)</td></tr>
+            <tr><td>ScienceQA</td><td>90.88</td><td class="vise">92.81</td></tr>
+            <tr><td>MMMU</td><td>50.12</td><td class="vise">52.69</td></tr>
+            <tr><td>InfoVQA</td><td>81.23</td><td class="vise">82.83</td></tr>
+            <tr><td>AI2D</td><td>83.31</td><td class="vise">84.10</td></tr>
+            <tr><td>ChartQA</td><td>84.87</td><td class="vise">85.41</td></tr>
+            <tr><td>GQA</td><td>61.54</td><td class="vise">62.43</td></tr>
+            <tr class="grouphdr"><td colspan="3">Hallucination</td></tr>
+            <tr><td>CHAIR-I &#8595;</td><td>11.20</td><td class="vise">10.84</td></tr>
+            <tr><td>CHAIR-S &#8595;</td><td>43.42</td><td class="vise">41.53</td></tr>
+            <tr><td>POPE</td><td>89.91</td><td class="vise">90.32</td></tr>
+          </tbody></table>
+        </div>
+    </div>
+  </section>
+  <script>
+    function showScale(s) {
+      document.querySelectorAll('.scale-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.scale-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('panel-' + s).classList.add('active');
+      document.getElementById('tab-' + s).classList.add('active');
+    }
+  </script>
+
+  <!-- ===================== QUALITATIVE CAROUSEL ===================== -->
+  <section class="hero is-small">
+    <div class="hero-body">
+      <div class="container">
+        <h2 class="title is-3 has-text-centered">Qualitative Comparisons</h2>
+        <div id="results-carousel" class="carousel results-carousel">
+          <div class="item">
+            <img src="static/images/Qual.png" alt="Qualitative comparison" loading="lazy"/>
+            <h2 class="subtitle has-text-centered fignote">
+              Baselines stay vague or commit to plausible-but-wrong details (&ldquo;wolves&rdquo;,
+              &ldquo;obelisk&rdquo;); VISE reads the image: three bears in order, a figure on a
+              car window, Trafalgar Square with Nelson's Column.
+            </h2>
+          </div>
+          <div class="item">
+            <img src="static/images/quals_desc1.png" alt="Detailed qualitative description 1" loading="lazy"/>
+            <h2 class="subtitle has-text-centered fignote">Image-grounded descriptions vs. prior self-evolving baselines.</h2>
+          </div>
+          <div class="item">
+            <img src="static/images/quals_desc2.png" alt="Detailed qualitative description 2" loading="lazy"/>
+            <h2 class="subtitle has-text-centered fignote">VISE attends to specific visible evidence rather than scene-level priors.</h2>
+          </div>
+          <div class="item">
+            <img src="static/images/quals_desc3.png" alt="Detailed qualitative description 3" loading="lazy"/>
+            <h2 class="subtitle has-text-centered fignote">Fewer hallucinated objects and more faithful attributes.</h2>
+          </div>
+          <div class="item">
+            <img src="static/images/quals_desc4.png" alt="Detailed qualitative description 4" loading="lazy"/>
+            <h2 class="subtitle has-text-centered fignote">Consistent gains across diverse natural scenes.</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== ANALYSIS ===================== -->
+  <section class="section">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Why it works: more attention to visual tokens</h2>
+          <img src="static/images/visualAttention.png" alt="Generation-time visual attention per layer" style="width:95%;border-radius:12px;">
+          <h2 class="subtitle has-text-centered fignote" style="margin-top:10px;">
+            Generation-time visual attention per decoder layer. VISE-trained models (orange) assign more
+            attention to image tokens across mid-to-late decoder layers (mean <b>+2.84%</b> on 2B,
+            <b>+2.56%</b> on 4B), reflecting the shift from language-prior-driven to image-conditioned
+            decoding.
+          </h2>
+          <img src="static/images/cka.png" alt="Per-layer CKA similarity" style="width:80%;border-radius:12px;margin-top:18px;">
+          <h2 class="subtitle has-text-centered fignote" style="margin-top:10px;">
+            Per-layer CKA similarity between original and geometrically augmented views. VISE gains are
+            confined to final layers on 2B (peak &Delta;=+0.069 at layer 27) and span layers 19&ndash;33
+            on 4B (peak &Delta;=+0.253), localizing where invariance correction takes effect.
+          </h2>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== BIBTEX ===================== -->
+  <section class="section" id="BibTeX">
+    <div class="container is-max-desktop content">
+      <div class="bibtex-header">
+        <h2 class="title">BibTeX</h2>
+        <button class="copy-bibtex-btn" onclick="copyBibTeX()" title="Copy BibTeX to clipboard">
+          <i class="fas fa-copy"></i> <span class="copy-text">Copy</span>
+        </button>
+      </div>
+      <pre id="bibtex-code"><code>@inproceedings{venkatraman2026vise,
+  title     = {Paying More Attention to Visual Tokens in Self-Evolving Large Multimodal Models},
+  author    = {Venkatraman, Shravan and Thawkar, Ritesh and Thawakar, Omkar and
+               Anwer, Rao Muhammad and Cholakkal, Hisham and Khan, Salman and Khan, Fahad Shahbaz},
+  booktitle = {European Conference on Computer Vision (ECCV)},
+  year      = {2026}
+}</code></pre>
+    </div>
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="has-text-centered" style="margin-bottom:18px;">
+        <a href="https://www.ival-mbzuai.com" target="_blank"><img src="static/images/IVAL_logo.png" style="height:54px;margin:0 14px;"></a>
+        <a href="https://github.com/mbzuai-oryx" target="_blank"><img src="static/images/Oryx_logo.png" style="height:54px;margin:0 14px;"></a>
+        <a href="https://mbzuai.ac.ae" target="_blank"><img src="static/images/MBZUAI_logo.png" style="height:54px;margin:0 14px;"></a>
+      </div>
+      <div class="columns is-centered">
+        <div class="column is-8">
+          <div class="content has-text-centered">
+            <p>
+              This page was built using the
+              <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a>,
+              adopted from the <a href="https://nerfies.github.io" target="_blank">Nerfies</a> project page.
+              This website is licensed under a
+              <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative
+              Commons Attribution-ShareAlike 4.0 International License</a>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+  </main>
+</body>
+</html>
