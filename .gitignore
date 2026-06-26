@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+
+# Training artifacts
+runs/
+wandb/
+*.log
+checkpoints/
+*.tmp/
+
+# Model weights (host on HuggingFace, not git)
+*.safetensors
+*.bin
+*.pt
+*.pth
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
