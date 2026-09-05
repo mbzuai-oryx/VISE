@@ -261,7 +261,7 @@ If you find VISE useful, please cite:
 ---
 
 <p align="center">
-  <a href="https://www.ival-mbzuai.com"><img src="assets/IVAL_logo.png" height="56"></a>
+  <a href="https://www.ival-mbzuai.net"><img src="assets/IVAL_logo.png" height="56"></a>
   &nbsp;&nbsp;&nbsp;
   <a href="https://github.com/mbzuai-oryx"><img src="assets/Oryx_logo.png" height="56"></a>
   &nbsp;&nbsp;&nbsp;
